@@ -1,11 +1,17 @@
 {
-  // Static assets only for now: the app is local-first. When Google sign-in
-  // and sync arrive, add "main" (a Worker) with run_worker_first: ["/api/*"].
+  // Static assets plus one Worker route, /api/sync. Sign-in is
+  // login.finereli.com; the Worker only checks its tokens (worker/verify.ts).
   "name": "100shots",
+  "main": "worker/index.ts",
   "compatibility_date": "2026-10-01",
   "assets": {
     "directory": "./dist",
-    "not_found_handling": "single-page-application"
+    "binding": "ASSETS",
+    "not_found_handling": "single-page-application",
+    "run_worker_first": ["/api/*"]
   },
+  "d1_databases": [
+    { "binding": "DB", "database_name": "100shots-db", "database_id": "d23533a5-11ca-40ce-85a7-0284d8abb6c6" }
+  ],
   "routes": [{ "pattern": "100shots.finereli.com", "custom_domain": true }]
 }

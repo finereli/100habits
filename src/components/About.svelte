@@ -12,7 +12,7 @@
     <li>Tapped by mistake? Hit Undo on the card or on the bar at the bottom.</li>
     <li>Open a habit to rename it, fix any shot, or delete it.</li>
   </ul>
-  <p class="note">Your shots are stored on this device. Sign-in and sync are coming.</p>
+  <p class="note">Your shots are stored on this device. Sign in from the menu to keep them on every device.</p>
 </div>
 
 <style>

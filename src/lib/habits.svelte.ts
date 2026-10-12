@@ -1,15 +1,16 @@
 // The habits store. Local-first: the whole dataset lives in localStorage and
-// every read is synchronous. Ids and timestamps are already shaped for a later
-// cloud sync (UUIDs, epoch ms), so merging two devices is a union by id.
+// every read is synchronous. Sync (sync.svelte.ts) sends the whole thing and
+// takes back the merge (merge.ts), so every edit here records what merging
+// needs: deletes leave tombstones, undo marks the item alive again (`t`), and
+// a rename stamps `nameAt`.
 
 import { toasts } from '$shared/lib/toast.svelte'
+import type { Data, Habit, Shot } from './merge'
+export type { Habit, Shot } from './merge'
 
 export const TARGET = 100
 const KEY = '100shots.data.v1'
 
-export interface Shot { id: string; at: number }
-export interface Habit { id: string; name: string; createdAt: number; shots: Shot[] }
-interface Data { version: 1; habits: Habit[] }
 
 const uid = () => (crypto.randomUUID ? crypto.randomUUID() : Math.random().toString(36).slice(2) + Date.now().toString(36))
 
@@ -22,6 +23,9 @@ export function shotLabel(i: number): string {
 
 class Habits {
   list = $state<Habit[]>([])
+  #tombstones: Record<string, number> = {}
+  // Called after every local edit (sync schedules itself here).
+  onEdit: () => void = () => {}
 
   constructor() {
     this.#load()
@@ -34,17 +38,42 @@ class Habits {
       const raw = localStorage.getItem(KEY)
       const data = raw ? (JSON.parse(raw) as Data) : null
       this.list = data?.habits ?? []
+      this.#tombstones = data?.tombstones ?? {}
     } catch {
       this.list = []
+      this.#tombstones = {}
+    }
+  }
+
+  #write() {
+    try {
+      localStorage.setItem(KEY, JSON.stringify(this.data()))
+    } catch {
+      toasts.error("Couldn't save on this device")
     }
   }
 
   #save() {
-    try {
-      localStorage.setItem(KEY, JSON.stringify({ version: 1, habits: $state.snapshot(this.list) } satisfies Data))
-    } catch {
-      toasts.error("Couldn't save on this device")
-    }
+    this.#write()
+    this.onEdit()
+  }
+
+  data(): Data {
+    return { version: 1, habits: $state.snapshot(this.list), tombstones: { ...this.#tombstones } }
+  }
+
+  // Take a merged copy from sync. Not an edit, so it doesn't sync again.
+  replace(data: Data) {
+    this.list = data.habits
+    this.#tombstones = data.tombstones ?? {}
+    this.#write()
+  }
+
+  // Signing out: this device forgets everything (it's on the server).
+  clear() {
+    this.list = []
+    this.#tombstones = {}
+    this.#write()
   }
 
   byId(id: string) { return this.list.find((h) => h.id === id) }
@@ -60,6 +89,7 @@ class Habits {
     const h = this.byId(id)
     if (!h || !name.trim() || h.name === name.trim()) return
     h.name = name.trim()
+    h.nameAt = Date.now()
     this.#save()
   }
 
@@ -67,6 +97,7 @@ class Habits {
     const i = this.list.findIndex((h) => h.id === id)
     if (i < 0) return
     const [h] = this.list.splice(i, 1)
+    this.#tombstones[h.id] = Date.now()
     this.#save()
     return h
   }
@@ -74,7 +105,7 @@ class Habits {
   // Put a deleted habit back where it was (undo).
   restore(h: Habit, index: number) {
     if (this.byId(h.id)) return
-    this.list.splice(Math.min(index, this.list.length), 0, h)
+    this.list.splice(Math.min(index, this.list.length), 0, { ...h, t: Date.now() })
     this.#save()
   }
 
@@ -92,6 +123,7 @@ class Habits {
     const i = h?.shots.findIndex((s) => s.id === shotId) ?? -1
     if (!h || i < 0) return
     const [shot] = h.shots.splice(i, 1)
+    this.#tombstones[shot.id] = Date.now()
     this.#save()
     return { shot, index: i }
   }
@@ -99,7 +131,7 @@ class Habits {
   restoreShot(id: string, shot: Shot) {
     const h = this.byId(id)
     if (!h || h.shots.some((s) => s.id === shot.id)) return
-    h.shots.push(shot)
+    h.shots.push({ ...shot, t: Date.now() })
     h.shots.sort((a, b) => a.at - b.at)
     this.#save()
   }
