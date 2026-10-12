@@ -1,6 +1,6 @@
-// finereli-login: client/verify.ts v1 (vendored from finereli/finereli-login; edit there)
-// finereli-login: server-side check for an app's Worker. Copy it next to the
-// app's API code.
+// pwa-kit: login/functions/verify-login.ts v1
+// Server side of login.finereli.com: check a request's Bearer token in the
+// app's Worker or Pages Function.
 //
 //   const user = await verifyLogin(request, {
 //     audience: ['https://myapp.finereli.com', 'http://localhost:5173'],

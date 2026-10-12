@@ -1,10 +1,11 @@
-// finereli-login: client/login.ts v1 (vendored from finereli/finereli-login; edit there)
-// finereli-login: browser client. Copy into an app (e.g. shared/lib/) and make
-// one instance:
+// pwa-kit: login/lib/finereli-login.ts v1
+// Sign in through login.finereli.com, the one Google sign-in for every app.
+// One instance per app (see account.example.svelte.ts):
 //
 //   export const login = new FinereliLogin({ storageKey: 'myapp.login' })
 //   login.handleRedirect()          // once, at startup
 //   login.signIn()                  // from a button
+//   makeApi(login)                  // kit api/: bearer + the 401 funnel
 //   fetch('/api/x', { headers: { Authorization: `Bearer ${login.token}` } })
 //
 // Sign-in opens login.finereli.com in a popup. The popup ends back on this
@@ -43,7 +44,7 @@ export class FinereliLogin {
   }
 
   get user(): LoginUser | null { return this.#saved?.user ?? null }
-  get token(): string | null { return this.#saved?.token ?? null }
+  get token(): string | undefined { return this.#saved?.token }
 
   onChange(fn: (u: LoginUser | null) => void): () => void {
     this.#listeners.push(fn)

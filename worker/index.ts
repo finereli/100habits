@@ -2,7 +2,7 @@
 // a device's whole dataset, merges it with the stored copy, stores and
 // returns the merge. Who you are comes from a login.finereli.com token.
 
-import { verifyLogin } from './verify'
+import { verifyLogin } from './verify-login'
 import { merge, type Data } from '../src/lib/merge'
 
 interface Env {
