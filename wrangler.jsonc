@@ -1,0 +1,11 @@
+{
+  // Static assets only for now: the app is local-first. When Google sign-in
+  // and sync arrive, add "main" (a Worker) with run_worker_first: ["/api/*"].
+  "name": "100shots",
+  "compatibility_date": "2026-10-01",
+  "assets": {
+    "directory": "./dist",
+    "not_found_handling": "single-page-application"
+  },
+  "routes": [{ "pattern": "100shots.finereli.com", "custom_domain": true }]
+}

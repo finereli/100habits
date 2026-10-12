@@ -1,0 +1,37 @@
+<!doctype html>
+<!-- pwa-kit: shell/index.html v6 -->
+<html lang="en" dir="ltr">
+  <head>
+    <meta charset="UTF-8" />
+    <!-- viewport-fit=cover for the safe areas; no user scaling because this is
+         an app, not a page (a deliberate choice - see reference/shell.md). -->
+    <meta
+      name="viewport"
+      content="width=device-width, initial-scale=1.0, viewport-fit=cover, maximum-scale=1.0, user-scalable=no, interactive-widget=resizes-content"
+    />
+    <title>100 Shots</title>
+    <meta name="description" content="Count your practice backwards from 100. Expect 100 bad attempts, and practice in peace." />
+
+    <meta name="theme-color" content="#a3432c" />
+    <meta name="mobile-web-app-capable" content="yes" />
+    <meta name="apple-mobile-web-app-capable" content="yes" />
+    <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent" />
+    <meta name="apple-mobile-web-app-title" content="100 Shots" />
+    <link rel="apple-touch-icon" href="/icons/apple-touch-icon.png" />
+    <link rel="icon" href="/icons/icon-192.png" type="image/png" />
+    <!-- Dark mode before first paint (kit theme/lib/theme.ts). -->
+    <script>
+      (function(){try{var d=localStorage.getItem('app.dark.v1');
+      if(d==='1'||(d===null&&matchMedia('(prefers-color-scheme: dark)').matches)){
+        document.documentElement.classList.add('dark');
+        document.querySelector('meta[name="theme-color"]').setAttribute('content','#1e1e2e')}}catch(e){}})()
+    </script>
+  </head>
+  <body>
+    <div id="app"></div>
+    <!-- Captured here, before the bundle: the event fires before Svelte mounts
+         and a component listener misses it. InstallBanner picks it up. -->
+    <script>window.addEventListener('beforeinstallprompt',function(e){e.preventDefault();window.__pwaInstallPrompt=e})</script>
+    <script type="module" src="/src/main.ts"></script>
+  </body>
+</html>
