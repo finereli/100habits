@@ -2,7 +2,7 @@
 // push and tells the server when to remind (local time + time zone) and the
 // local date of its last shot, so a day with a shot already logged stays
 // quiet. The server sends an empty push; the service worker (public/push-sw.js)
-// writes the text from a random habit, read from the snapshot mirrored here.
+// shows the text.
 
 import { localDateStr } from '$shared/lib/format'
 import { habits } from './habits.svelte'
@@ -10,8 +10,6 @@ import { VAPID_PUBLIC } from './vapid'
 
 const KEY = '100shots.reminders.v1'
 const OFFER_KEY = '100shots.reminderOffer.v1'
-const SNAPSHOT_CACHE = '100shots-reminder'
-const SNAPSHOT_URL = '/__reminder.json'
 const OFFER_AGAIN = 7 * 24 * 3600 * 1000
 
 export const DEFAULT_TIME = '21:00'
@@ -89,8 +87,7 @@ class Reminders {
   }
 
   start() {
-    habits.onWrite = () => { this.#snapshot(); this.#scheduleReport() }
-    this.#snapshot()
+    habits.onWrite = () => this.#scheduleReport()
     if (!this.on || !this.supported) return
     // Re-check on launch: permission may have been revoked, or the server may
     // have dropped the row. Re-subscribing is idempotent.
@@ -111,7 +108,6 @@ class Reminders {
       await this.#register((await this.#subscription(true))!)
       this.on = true
       this.#persist()
-      this.#snapshot()
       return true
     } catch {
       this.error = "Couldn't turn reminders on. Check your connection and try again."
@@ -173,14 +169,6 @@ class Reminders {
     if (res?.ok || res?.status === 404) this.#lastReported = key
   }
 
-  // The habit names the service worker picks from. Local only.
-  #snapshot() {
-    if (typeof caches === 'undefined') return
-    const names = habits.list.map((h) => h.name)
-    caches.open(SNAPSHOT_CACHE)
-      .then((c) => c.put(SNAPSHOT_URL, new Response(JSON.stringify({ names }), { headers: { 'Content-Type': 'application/json' } })))
-      .catch(() => {})
-  }
 }
 
 export const reminders = new Reminders()
