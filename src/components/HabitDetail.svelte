@@ -1,5 +1,6 @@
 <script lang="ts">
   import Icon from './Icon.svelte'
+  import ConfirmButton from './ConfirmButton.svelte'
   import { habits, shotLabel, shotsToday, TARGET, type Habit } from '../lib/habits.svelte'
   import { undo } from '../lib/undo.svelte'
   import { router } from '../lib/router.svelte'
@@ -12,7 +13,6 @@
     // Init the field once per habit, never on a re-render.
     if (initFor !== habit.id) { initFor = habit.id; name = habit.name }
   })
-  let confirming = $state(false)
 
   const n = $derived(habit.shots.length)
   // Newest first, each with its number in the countdown.
@@ -70,17 +70,9 @@
   {/if}
 
   <div class="danger">
-    {#if confirming}
-      <span>Delete “{habit.name}” and its {n} shots?</span>
-      <div class="row">
-        <button class="ghost" onclick={() => (confirming = false)}>Keep</button>
-        <button class="red" onclick={del}>Delete</button>
-      </div>
-    {:else}
-      <button class="del" onclick={() => (confirming = true)}>
-        <Icon name="delete" size={20} /> Delete habit
-      </button>
-    {/if}
+    <ConfirmButton onconfirm={del} confirmLabel={n > 1 ? `Tap again to delete it and its ${n} shots` : n ? 'Tap again to delete it and its shot' : 'Tap again to delete'}>
+      <Icon name="delete" size={20} /> Delete habit
+    </ConfirmButton>
   </div>
 </div>
 
@@ -134,12 +126,5 @@
   .x:hover { color: var(--danger); opacity: 1; background: var(--bg-hover); }
   .empty { font-size: 0.9rem; color: var(--text-secondary); line-height: 1.5; padding: 4px 2px; }
 
-  .danger { margin-top: 36px; display: flex; flex-direction: column; align-items: center; gap: 10px; text-align: center; }
-  .danger span { font-size: 0.9rem; }
-  .row { display: flex; gap: 8px; }
-  .row button { padding: 10px 20px; border-radius: 10px; font-size: 0.9rem; font-weight: 500; }
-  .ghost { color: var(--text-secondary); border: 1px solid var(--border); }
-  .red { background: var(--danger); color: #fff; }
-  .del { display: inline-flex; align-items: center; gap: 6px; color: var(--text-secondary); font-size: 0.88rem; padding: 12px 16px; border-radius: 10px; }
-  .del:hover { color: var(--danger); }
+  .danger { margin-top: 36px; display: flex; justify-content: center; }
 </style>

@@ -1,5 +1,6 @@
 <script lang="ts">
   import Icon from './Icon.svelte'
+  import ConfirmButton from './ConfirmButton.svelte'
   import { habits, shotsToday, TARGET, type Habit } from '../lib/habits.svelte'
   import { undo } from '../lib/undo.svelte'
   import { router } from '../lib/router.svelte'
@@ -15,7 +16,6 @@
   let lastTap = 0
 
   let menuOpen = $state(false)
-  let confirming = $state(false)
   let renaming = $state(false)
   let draft = $state('')
   let nameInput = $state<HTMLInputElement>()
@@ -24,7 +24,6 @@
   function toggleMenu(e: MouseEvent) {
     e.stopPropagation()
     menuOpen = !menuOpen
-    confirming = false
   }
 
   // Outside tap or Escape closes the menu.
@@ -130,17 +129,11 @@
       </button>
       {#if menuOpen}
         <div class="menu" role="menu">
-          {#if confirming}
-            <p>Delete “{habit.name}”{n ? ` and its ${n} shots` : ''}?</p>
-            <div class="confirm">
-              <button onclick={() => (confirming = false)}>Keep</button>
-              <button class="red" onclick={del}>Delete</button>
-            </div>
-          {:else}
-            <button role="menuitem" onclick={startRename}><Icon name="edit" size={20} /> Rename</button>
-            <button role="menuitem" onclick={() => router.go(`/h/${habit.id}`)}><Icon name="history" size={20} /> Shot history</button>
-            <button role="menuitem" class="danger" onclick={() => (confirming = true)}><Icon name="delete" size={20} /> Delete</button>
-          {/if}
+          <button role="menuitem" onclick={startRename}><Icon name="edit" size={20} /> Rename</button>
+          <button role="menuitem" onclick={() => router.go(`/h/${habit.id}`)}><Icon name="history" size={20} /> Shot history</button>
+          <ConfirmButton class="menu-delete" onconfirm={del} confirmLabel="Tap again to delete">
+            <Icon name="delete" size={20} /> Delete
+          </ConfirmButton>
         </div>
       {/if}
     </div>
@@ -277,11 +270,9 @@
   }
   .menu > button:hover { background: var(--bg-hover); }
   .menu > button :global(svg) { color: var(--text-secondary); }
-  .menu .danger, .menu .danger :global(svg) { color: var(--danger); }
-  .menu p { font-size: 0.88rem; padding: 8px 8px 10px; line-height: 1.4; }
-  .confirm { display: flex; gap: 6px; justify-content: flex-end; }
-  .confirm button { min-height: 40px; padding: 0 14px; border-radius: 10px; font-size: 0.88rem; font-weight: 500; border: 1px solid var(--border); }
-  .confirm .red { background: var(--danger); border-color: var(--danger); color: #fff; }
+  /* Delete keeps the menu-row shape; ConfirmButton supplies the red. */
+  .menu > :global(.menu-delete svg) { color: inherit; }
+  .menu :global(.menu-delete) { width: 100%; justify-content: flex-start; gap: 10px; padding: 0 12px; font-size: 0.92rem; font-weight: 400; }
 
   .rename { flex: 1; }
   .rename input {
