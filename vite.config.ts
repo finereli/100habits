@@ -21,6 +21,8 @@ export default defineConfig({
     VitePWA(
       pwaOptions({
         includeAssets: ['icons/*.png'],
+        // The push and notification-click handlers (nightly reminders).
+        workbox: { importScripts: ['/push-sw.js'] },
         manifest: {
           name: '100 Shots',
           short_name: '100 Shots',

@@ -26,6 +26,8 @@ class Habits {
   #tombstones: Record<string, number> = {}
   // Called after every local edit (sync schedules itself here).
   onEdit: () => void = () => {}
+  // Called after every write, edits and merges alike (reminders mirror the list).
+  onWrite: () => void = () => {}
 
   constructor() {
     this.#load()
@@ -51,6 +53,7 @@ class Habits {
     } catch {
       toasts.error("Couldn't save on this device")
     }
+    this.onWrite()
   }
 
   #save() {

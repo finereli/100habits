@@ -21,4 +21,8 @@ for (const [file, size, mark, radius] of [
     </div></body>`)
   await page.screenshot({ path: out + file, omitBackground: true })
 }
+// Android status-bar badge: a monochrome mark on transparent (the OS tints it).
+await page.setViewportSize({ width: 72, height: 72 })
+await page.setContent(`<body style="margin:0;background:transparent"><div style="width:72px;height:72px;display:grid;place-items:center;font:800 30px 'Helvetica Neue',Arial,sans-serif;letter-spacing:-1.5px;color:#fff">100</div></body>`)
+await page.screenshot({ path: out + 'badge-72.png', omitBackground: true })
 await browser.close()

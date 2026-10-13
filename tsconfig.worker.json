@@ -10,5 +10,5 @@
     "lib": ["ES2022"],
     "types": ["@cloudflare/workers-types"]
   },
-  "include": ["worker/**/*", "src/lib/merge.ts"]
+  "include": ["worker/**/*", "src/lib/merge.ts", "src/lib/vapid.ts"]
 }

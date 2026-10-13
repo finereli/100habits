@@ -1,5 +1,5 @@
 {
-  // Static assets plus one Worker route, /api/sync. Sign-in is
+  // Static assets plus the Worker routes under /api/ (sync, push). Sign-in is
   // login.finereli.com; the Worker only checks its tokens (worker/verify.ts).
   "name": "100shots",
   "main": "worker/index.ts",
@@ -13,5 +13,7 @@
   "d1_databases": [
     { "binding": "DB", "database_name": "100shots-db", "database_id": "d23533a5-11ca-40ce-85a7-0284d8abb6c6" }
   ],
+  // Nightly reminders: send whatever is due (worker/push.ts).
+  "triggers": { "crons": ["*/5 * * * *"] },
   "routes": [{ "pattern": "100shots.finereli.com", "custom_domain": true }]
 }

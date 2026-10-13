@@ -1,6 +1,6 @@
 import { Router } from '$shared/lib/router.svelte'
 
-export type Route = { view: 'home' } | { view: 'about' } | { view: 'habit'; id: string }
+export type Route = { view: 'home' } | { view: 'about' } | { view: 'settings' } | { view: 'habit'; id: string }
 
 export const router = new Router<Route>({
   home: '/',
@@ -8,6 +8,7 @@ export const router = new Router<Route>({
     const h = path.match(/^\/h\/([\w-]+)$/)
     if (h) return { view: 'habit', id: h[1] }
     if (path === '/about') return { view: 'about' }
+    if (path === '/settings') return { view: 'settings' }
     return { view: 'home' }
   },
 })
