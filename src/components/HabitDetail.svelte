@@ -1,6 +1,6 @@
 <script lang="ts">
   import Icon from './Icon.svelte'
-  import ConfirmButton from './ConfirmButton.svelte'
+  import ConfirmButton from '$shared/ui/ConfirmButton.svelte'
   import { habits, shotLabel, shotsToday, TARGET, type Habit } from '../lib/habits.svelte'
   import { undo } from '../lib/undo.svelte'
   import { router } from '../lib/router.svelte'
@@ -70,7 +70,7 @@
   {/if}
 
   <div class="danger">
-    <ConfirmButton onconfirm={del} confirmLabel={n > 1 ? `Tap again to delete it and its ${n} shots` : n ? 'Tap again to delete it and its shot' : 'Tap again to delete'}>
+    <ConfirmButton class="del" onconfirm={del}>
       <Icon name="delete" size={20} /> Delete habit
     </ConfirmButton>
   </div>
@@ -127,4 +127,6 @@
   .empty { font-size: 0.9rem; color: var(--text-secondary); line-height: 1.5; padding: 4px 2px; }
 
   .danger { margin-top: 36px; display: flex; justify-content: center; }
+  /* A text link, red (ConfirmButton); it stays a link when armed. */
+  .danger :global(.del) { display: inline-flex; align-items: center; gap: 6px; min-height: 44px; padding: 0 16px; border-radius: 10px; font-size: 0.9rem; }
 </style>

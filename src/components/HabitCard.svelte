@@ -1,6 +1,6 @@
 <script lang="ts">
   import Icon from './Icon.svelte'
-  import ConfirmButton from './ConfirmButton.svelte'
+  import ConfirmButton from '$shared/ui/ConfirmButton.svelte'
   import { habits, shotsToday, TARGET, type Habit } from '../lib/habits.svelte'
   import { undo } from '../lib/undo.svelte'
   import { router } from '../lib/router.svelte'
@@ -131,7 +131,7 @@
         <div class="menu" role="menu">
           <button role="menuitem" onclick={startRename}><Icon name="edit" size={20} /> Rename</button>
           <button role="menuitem" onclick={() => router.go(`/h/${habit.id}`)}><Icon name="history" size={20} /> Shot history</button>
-          <ConfirmButton class="menu-delete" onconfirm={del} confirmLabel="Tap again to delete">
+          <ConfirmButton class="menu-delete" onconfirm={del}>
             <Icon name="delete" size={20} /> Delete
           </ConfirmButton>
         </div>
@@ -270,9 +270,9 @@
   }
   .menu > button:hover { background: var(--bg-hover); }
   .menu > button :global(svg) { color: var(--text-secondary); }
-  /* Delete keeps the menu-row shape; ConfirmButton supplies the red. */
-  .menu > :global(.menu-delete svg) { color: inherit; }
-  .menu :global(.menu-delete) { width: 100%; justify-content: flex-start; gap: 10px; padding: 0 12px; font-size: 0.92rem; font-weight: 400; }
+  /* Delete is a ConfirmButton shaped as the same menu row (it adds the red). */
+  .menu :global(.menu-delete) { display: flex; align-items: center; gap: 10px; width: 100%; min-height: 44px; padding: 0 12px; border-radius: 10px; font-size: 0.92rem; text-align: start; }
+  .menu :global(.menu-delete:hover) { background: var(--bg-hover); }
 
   .rename { flex: 1; }
   .rename input {
