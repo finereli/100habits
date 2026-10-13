@@ -1,6 +1,6 @@
 <script lang="ts">
   import Icon from './Icon.svelte'
-  import { habits, shotLabel, TARGET, type Habit } from '../lib/habits.svelte'
+  import { habits, shotLabel, shotsToday, TARGET, type Habit } from '../lib/habits.svelte'
   import { undo } from '../lib/undo.svelte'
   import { router } from '../lib/router.svelte'
 
@@ -47,9 +47,8 @@
   </label>
 
   <div class="stats">
-    <div><strong>{shotLabel(n)}</strong><span>next shot</span></div>
-    <div><strong>{n}</strong><span>taken</span></div>
-    <div><strong>{Math.max(TARGET - n, 0)}</strong><span>bad ones left</span></div>
+    <div><strong>{Math.max(TARGET - n, 0)}</strong><span>left</span></div>
+    <div><strong>{shotsToday(habit)}</strong><span>today</span></div>
   </div>
   <p class="since">Started {started}</p>
 
@@ -105,7 +104,7 @@
   }
   .name input:focus { border-color: var(--accent); box-shadow: 0 0 0 1px var(--accent); }
 
-  .stats { display: grid; grid-template-columns: repeat(3, 1fr); gap: 10px; margin-top: 18px; }
+  .stats { display: grid; grid-template-columns: repeat(2, 1fr); gap: 10px; margin-top: 18px; }
   .stats div {
     display: flex;
     flex-direction: column;

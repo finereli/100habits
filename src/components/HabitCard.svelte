@@ -1,18 +1,69 @@
 <script lang="ts">
   import Icon from './Icon.svelte'
-  import { habits, shotLabel, shotsToday, TARGET, type Habit } from '../lib/habits.svelte'
+  import { habits, shotsToday, TARGET, type Habit } from '../lib/habits.svelte'
   import { undo } from '../lib/undo.svelte'
   import { router } from '../lib/router.svelte'
 
   let { habit }: { habit: Habit } = $props()
 
   const n = $derived(habit.shots.length)
-  // The big number is the shot you're about to take: 100 before the first.
-  const next = $derived(shotLabel(n))
+  // A countdown, never a counter: how many of the hundred are left.
+  const left = $derived(Math.max(TARGET - n, 0))
   const done = $derived(n >= TARGET)
   const today = $derived(shotsToday(habit))
   let pop = $state(0)
   let lastTap = 0
+
+  let menuOpen = $state(false)
+  let confirming = $state(false)
+  let renaming = $state(false)
+  let draft = $state('')
+  let nameInput = $state<HTMLInputElement>()
+  let menuEl = $state<HTMLElement>()
+
+  function toggleMenu(e: MouseEvent) {
+    e.stopPropagation()
+    menuOpen = !menuOpen
+    confirming = false
+  }
+
+  // Outside tap or Escape closes the menu.
+  $effect(() => {
+    if (!menuOpen) return
+    // The tap that closes the menu does only that: its click is swallowed,
+    // so it doesn't also open the card underneath.
+    const swallow = (e: Event) => { e.stopPropagation(); e.preventDefault() }
+    const close = (e: Event) => {
+      if (menuEl?.contains(e.target as Node)) return
+      menuOpen = false
+      addEventListener('click', swallow, { capture: true, once: true })
+      setTimeout(() => removeEventListener('click', swallow, true), 600)
+    }
+    const esc = (e: KeyboardEvent) => e.key === 'Escape' && (menuOpen = false)
+    addEventListener('pointerdown', close, true)
+    addEventListener('keydown', esc)
+    return () => { removeEventListener('pointerdown', close, true); removeEventListener('keydown', esc) }
+  })
+
+  function startRename() {
+    menuOpen = false
+    draft = habit.name
+    renaming = true
+  }
+  $effect(() => { if (renaming) { nameInput?.focus(); nameInput?.select() } })
+
+  function finishRename(save: boolean) {
+    if (!renaming) return
+    renaming = false
+    if (save && draft.trim()) habits.rename(habit.id, draft)
+  }
+
+  function del() {
+    menuOpen = false
+    const index = habits.list.indexOf(habit)
+    const h = habits.remove(habit.id)
+    if (h) undo.offer(`Deleted ${h.name}`, () => habits.restore(h, index), 7000)
+  }
 
   function shoot(e: MouseEvent) {
     e.stopPropagation()
@@ -20,18 +71,17 @@
     const now = Date.now()
     if (now - lastTap < 700) return
     lastTap = now
-    const label = shotLabel(n)
     const s = habits.shoot(habit.id)
     if (!s) return
     pop++
     navigator.vibrate?.(12)
-    undo.offer(`${habit.name}: shot ${label} logged`, () => habits.removeShot(habit.id, s.id))
+    undo.offer(`${habit.name}: ${Math.max(TARGET - n, 0)} left`, () => habits.removeShot(habit.id, s.id))
   }
 
   function undoLast(e: MouseEvent) {
     e.stopPropagation()
     const r = habits.undoLast(habit.id)
-    if (r) undo.offer(`Shot ${shotLabel(r.index)} removed`, () => habits.restoreShot(habit.id, r.shot))
+    if (r) undo.offer(`Shot removed, ${Math.max(TARGET - n, 0)} left`, () => habits.restoreShot(habit.id, r.shot))
   }
 </script>
 
@@ -39,21 +89,30 @@
   <button class="open" onclick={() => router.go(`/h/${habit.id}`)} aria-label="Open {habit.name}"></button>
 
   <header>
-    <h2>{habit.name}</h2>
-    {#if today}<span class="today">{today} today</span>{/if}
+    {#if renaming}
+      <form class="rename" onsubmit={(e) => { e.preventDefault(); finishRename(true) }}>
+        <input
+          bind:this={nameInput}
+          bind:value={draft}
+          maxlength="60"
+          enterkeyhint="done"
+          aria-label="Habit name"
+          onblur={() => finishRename(true)}
+          onkeydown={(e) => e.key === 'Escape' && finishRename(false)}
+        />
+      </form>
+    {:else}
+      <h2>{habit.name}</h2>
+      {#if today}<span class="today">{today} today</span>{/if}
+    {/if}
   </header>
 
   <div class="main">
     <div class="count">
-      {#key pop}<span class="num" class:popped={pop > 0}>{next}</span>{/key}
-      <span class="label">
-        {#if n === 0}first shot
-        {:else if n < TARGET}{TARGET - n === 1 ? 'last bad shot' : 'next shot'}
-        {:else if n === TARGET}100 bad shots, done
-        {:else}past 100{/if}
-      </span>
+      {#key pop}<span class="num" class:popped={pop > 0}>{left}</span>{/key}
+      <span class="label">{done ? 'left. All 100 done.' : 'left'}</span>
     </div>
-    <button class="shoot" onclick={shoot} aria-label="Log shot {next}">
+    <button class="shoot" onclick={shoot} aria-label="Log a shot, {left} left">
       <Icon name="check" size={40} />
     </button>
   </div>
@@ -65,7 +124,26 @@
   </div>
 
   <footer>
-    <span class="meta">{n} of {TARGET}{n > TARGET ? ` (+${n - TARGET})` : ''}</span>
+    <div class="menu-wrap" bind:this={menuEl}>
+      <button class="kebab" onclick={toggleMenu} aria-label="Options for {habit.name}" aria-haspopup="menu" aria-expanded={menuOpen}>
+        <Icon name="more_vert" size={20} />
+      </button>
+      {#if menuOpen}
+        <div class="menu" role="menu">
+          {#if confirming}
+            <p>Delete “{habit.name}”{n ? ` and its ${n} shots` : ''}?</p>
+            <div class="confirm">
+              <button onclick={() => (confirming = false)}>Keep</button>
+              <button class="red" onclick={del}>Delete</button>
+            </div>
+          {:else}
+            <button role="menuitem" onclick={startRename}><Icon name="edit" size={20} /> Rename</button>
+            <button role="menuitem" onclick={() => router.go(`/h/${habit.id}`)}><Icon name="history" size={20} /> Shot history</button>
+            <button role="menuitem" class="danger" onclick={() => (confirming = true)}><Icon name="delete" size={20} /> Delete</button>
+          {/if}
+        </div>
+      {/if}
+    </div>
     {#if n > 0}
       <button class="undo" onclick={undoLast} aria-label="Undo last shot">
         <Icon name="undo" size={16} /> Undo
@@ -89,7 +167,7 @@
   /* The whole card opens the habit; the buttons sit above this layer. */
   .open { position: absolute; inset: 0; border-radius: inherit; z-index: 0; }
   header, .main, footer { position: relative; z-index: 1; pointer-events: none; }
-  .shoot, .undo { pointer-events: auto; }
+  .shoot, .undo, .kebab, .menu, .rename { pointer-events: auto; }
 
   header { display: flex; align-items: baseline; justify-content: space-between; gap: 12px; }
   h2 {
@@ -110,7 +188,7 @@
   }
 
   .main { display: flex; align-items: center; justify-content: space-between; margin: 4px 0 12px; }
-  .count { display: flex; flex-direction: column; }
+  .count { display: flex; align-items: baseline; gap: 8px; }
   .num {
     font-family: var(--font-num);
     font-size: 3.2rem;
@@ -124,7 +202,7 @@
   }
   .popped { animation: pop 0.28s cubic-bezier(0.3, 1.6, 0.6, 1); }
   @keyframes pop { from { transform: scale(0.8); opacity: 0.4; } to { transform: scale(1); opacity: 1; } }
-  .label { font-size: 0.78rem; color: var(--text-secondary); margin-top: 4px; letter-spacing: 0.02em; }
+  .label { font-size: 1.1rem; color: var(--text-secondary); }
   .done .num { color: var(--accent); }
 
   .shoot {
@@ -162,7 +240,62 @@
     min-height: 40px;
     margin-top: 6px;
   }
-  .meta { font-size: 0.75rem; color: var(--text-secondary); font-variant-numeric: tabular-nums; }
+  .menu-wrap { position: relative; }
+  .kebab {
+    width: 40px;
+    height: 40px;
+    margin-left: -10px;
+    display: grid;
+    place-items: center;
+    border-radius: 50%;
+    color: var(--text-secondary);
+  }
+  .kebab:hover, .kebab[aria-expanded='true'] { background: var(--bg-hover); color: var(--text-primary); }
+  /* Opens upward from the card's bottom edge, over the dots. */
+  .menu {
+    position: absolute;
+    left: -10px;
+    bottom: calc(100% + 4px);
+    z-index: 20;
+    min-width: 200px;
+    padding: 6px;
+    background: var(--bg-raised);
+    border: 1px solid var(--border);
+    border-radius: 14px;
+    box-shadow: 0 8px 28px rgba(0, 0, 0, 0.18);
+  }
+  .menu > button {
+    display: flex;
+    align-items: center;
+    gap: 10px;
+    width: 100%;
+    min-height: 44px;
+    padding: 0 12px;
+    border-radius: 10px;
+    font-size: 0.92rem;
+    text-align: start;
+  }
+  .menu > button:hover { background: var(--bg-hover); }
+  .menu > button :global(svg) { color: var(--text-secondary); }
+  .menu .danger, .menu .danger :global(svg) { color: var(--danger); }
+  .menu p { font-size: 0.88rem; padding: 8px 8px 10px; line-height: 1.4; }
+  .confirm { display: flex; gap: 6px; justify-content: flex-end; }
+  .confirm button { min-height: 40px; padding: 0 14px; border-radius: 10px; font-size: 0.88rem; font-weight: 500; border: 1px solid var(--border); }
+  .confirm .red { background: var(--danger); border-color: var(--danger); color: #fff; }
+
+  .rename { flex: 1; }
+  .rename input {
+    font-size: 1.05rem;
+    font-weight: 500;
+    padding: 2px 10px;
+    margin: -3px 0 -3px -11px;
+    width: calc(100% + 11px);
+    border: 1px solid var(--accent);
+    box-shadow: 0 0 0 1px var(--accent);
+    border-radius: 10px;
+    background: var(--bg-surface);
+    outline: none;
+  }
   .undo {
     display: inline-flex;
     align-items: center;

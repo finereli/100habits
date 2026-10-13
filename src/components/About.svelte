@@ -10,7 +10,7 @@
     <li>Add a habit for each thing you're practicing.</li>
     <li>Tap the check after every attempt, good or bad.</li>
     <li>Tapped by mistake? Hit Undo on the card or on the bar at the bottom.</li>
-    <li>Open a habit to rename it, fix any shot, or delete it.</li>
+    <li>The ⋮ on a card renames or deletes the habit. Shot history lets you fix any single shot.</li>
     <li>Turn on the evening reminder in Settings. It skips days you already logged a shot.</li>
   </ul>
   <p class="note">Your shots are stored on this device. Sign in from Settings to keep them on every device.</p>
