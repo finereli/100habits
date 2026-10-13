@@ -21,6 +21,11 @@ export default defineConfig({
     VitePWA(
       pwaOptions({
         includeAssets: ['icons/*.png'],
+        // Static pages for people and crawlers, served as files, not the app shell.
+        navigateFallbackDenylist: [
+          /^\/api\//, /^\/icons\//, /^\/fonts\//, /^\/reset(\.html)?$/, /^\/oauth\//, /^\/mcp/, /^\/\.well-known\//,
+          /^\/about(\.html)?$/, /^\/[\w-]+\.(txt|xml)$/,
+        ],
         // The push and notification-click handlers (nightly reminders).
         workbox: { importScripts: ['/push-sw.js'] },
         manifest: {

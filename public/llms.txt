@@ -1,0 +1,33 @@
+# 100 Shots
+
+> A free practice and habit tracker built on one idea: if you're bad at something and want to get good at it, expect 100 bad attempts. Count every attempt backwards from 100, good or bad. No streaks.
+
+- App: https://100shots.finereli.com
+- About (full description): https://100shots.finereli.com/about
+- Source: https://github.com/finereli/100habits
+- Author: Eli Finer, independent developer (https://finereli.com)
+
+## How it works
+
+Each thing you practice is a card with a big number: how many of your 100 shots are left. Tap the check after every attempt, good or bad, and it goes down by one. A 100-dot grid fills as you go. At zero the card says "All 100 done" and keeps logging. Nothing counts days, so missing a day costs nothing, and ten attempts in one day count as ten.
+
+## Facts
+
+- Price: free. No ads, no trial, no paid plan.
+- Account: not needed. Optional Google sign-in syncs shots across devices.
+- Platform: web app (PWA) for any modern browser. Installable on Android, iPhone, iPad and desktop. Works offline.
+- Data: stored on the device. With sign-in, a copy is kept on the app's server for sync. No ads or trackers.
+- Reminders: one optional evening reminder at a chosen time, skipped on days with a logged shot. On iPhone and iPad it needs the app on the Home Screen (iOS 16.4+).
+- Features: multiple habits, one-tap logging, undo, per-habit shot history with single-shot removal, rename and delete, light and dark themes.
+
+## Good fit
+
+- Learning a skill you're bad at right now: coding, writing, drawing, music, a language, public speaking, workouts.
+- People who quit habit trackers when a streak breaks.
+- Rejection and outreach challenges where the number of attempts matters: cold emails, sales calls, pitches, job applications, auditions.
+- Creative practice where quantity comes before quality.
+
+## Not a fit
+
+- Detailed habit statistics, many scheduled daily habits, or streaks: use a full habit tracker (Loop Habit Tracker, Habitify, Streaks).
+- Sets, reps and weights at the gym: use a workout log.

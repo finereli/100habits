@@ -1,0 +1,125 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>100 Shots - a practice tracker that counts backwards from 100</title>
+<meta name="description" content="A free habit and practice tracker built on one idea: expect 100 bad attempts. Count every attempt backwards from 100, good or bad. No streaks, no account needed, works offline on any phone.">
+<link rel="canonical" href="https://100shots.finereli.com/about">
+<meta name="color-scheme" content="light dark">
+<link rel="icon" href="/icons/icon-192.png" type="image/png">
+<link rel="apple-touch-icon" href="/icons/apple-touch-icon.png">
+<meta property="og:type" content="website">
+<meta property="og:title" content="100 Shots - count your practice backwards from 100">
+<meta property="og:description" content="Expect 100 bad attempts, and practice in peace. A free practice tracker with no streaks to break.">
+<meta property="og:url" content="https://100shots.finereli.com/about">
+<meta property="og:image" content="https://100shots.finereli.com/icons/icon-512.png">
+<script type="application/ld+json">
+{"@context":"https://schema.org","@type":"WebApplication","name":"100 Shots",
+"description":"A free practice and habit tracker that counts attempts backwards from 100 instead of tracking streaks. Expect 100 bad attempts, and practice in peace.",
+"url":"https://100shots.finereli.com/","applicationCategory":"LifestyleApplication","operatingSystem":"Any (web app; installable on Android, iPhone, iPad and desktop)",
+"browserRequirements":"A modern browser. Reminders need Chrome, Edge, Firefox or Safari 16.4+ with the app added to the Home Screen.",
+"offers":{"@type":"Offer","price":"0","priceCurrency":"USD"},"isAccessibleForFree":true,
+"author":{"@type":"Person","name":"Eli Finer","url":"https://finereli.com"}}
+</script>
+<style>
+:root{--accent:#c4553a;--deep:#a3432c;--soft:#f7e4dc;--bg:#faf6f0;--raised:#fff;--ink:#2c1810;--muted:#7a685c;--line:#e8ddd0;
+--num:ui-rounded,'SF Pro Rounded',-apple-system,BlinkMacSystemFont,'Segoe UI',system-ui,sans-serif}
+@media (prefers-color-scheme:dark){:root{--accent:#e07a5f;--deep:#f2b8a6;--soft:#3a2a2a;--bg:#1e1e2e;--raised:#262637;--ink:#cdd6f4;--muted:#a6adc8;--line:#3b3c50}}
+*{box-sizing:border-box}
+body{margin:0;background:var(--bg);color:var(--ink);font:17px/1.6 -apple-system,BlinkMacSystemFont,'Segoe UI',system-ui,sans-serif}
+main{max-width:680px;margin:0 auto;padding:40px 16px 64px}
+h1{font-family:var(--num);font-size:2.4rem;line-height:1.1;margin:0 0 12px;color:var(--deep)}
+h2{font-family:var(--num);font-size:1.35rem;margin:44px 0 10px}
+h3{font-size:1.05rem;margin:22px 0 4px}
+p{margin:0 0 14px}
+a{color:var(--accent)}
+.lede{font-size:1.15rem}
+.open{display:inline-block;margin:10px 0 6px;padding:13px 22px;border-radius:12px;background:var(--accent);color:#fff;text-decoration:none;font-weight:600}
+.fine{color:var(--muted);font-size:.9rem}
+.count{display:flex;gap:10px;margin:18px 0;flex-wrap:wrap}
+.count span{font-family:var(--num);font-weight:700;font-size:1.4rem;padding:6px 14px;border-radius:10px;background:var(--soft);color:var(--deep)}
+ul{padding-left:1.2em}li+li{margin-top:4px}
+dl{margin:0}dt{font-weight:700;margin-top:18px}dd{margin:4px 0 0;color:var(--muted)}
+table{border-collapse:collapse;width:100%;font-size:.95rem;margin:12px 0}
+th,td{text-align:left;padding:8px 10px;border-bottom:1px solid var(--line);vertical-align:top}
+.wide{overflow-x:auto}
+footer{margin-top:56px;color:var(--muted);font-size:.9rem}
+</style>
+</head>
+<body>
+<main>
+<h1>Start at 100 and count backwards.</h1>
+<p class="lede">100 Shots is a free practice tracker built on one idea. If you're bad at something and want to get good at it, expect to have 100 bad attempts.</p>
+<p>So the first attempt is 100. The second is 99. The third is 98.</p>
+<div class="count" aria-hidden="true"><span>100</span><span>99</span><span>98</span><span>…</span><span>1</span></div>
+<p>It rewires your expectations. A bad attempt isn't a failure, it's one of the hundred you planned for. Less frustration, and you get to practice in peace.</p>
+<a class="open" href="/">Open 100 Shots</a>
+<p class="fine">Free. No account needed. Works offline. Install it on your phone from the browser.</p>
+
+<h2>What it is</h2>
+<p>A simple counter for practice. Each thing you're practicing is a card with a big number: how many of your hundred shots are left. Tap the check after every attempt, good or bad, and the number goes down by one. A grid of 100 dots fills up as you go. When you reach zero the card says "All 100 done", and you can keep logging shots.</p>
+<p>There are no streaks, no goals, no ratings and no "you missed a day". A day off doesn't reset anything. The only thing it counts is attempts, because attempts are the part you control.</p>
+
+<h2>Who it's for</h2>
+<ul>
+<li>Anyone learning a skill they're bad at right now: coding, writing, drawing, an instrument, a language, public speaking, working out.</li>
+<li>People who quit habit trackers when a streak breaks.</li>
+<li>Rejection and outreach challenges, where the number of asks matters more than the outcome: cold emails, sales calls, pitches, auditions, job applications.</li>
+<li>Creative practice where quantity comes before quality: one sketch, one song, one short story at a time.</li>
+</ul>
+
+<h2>Features</h2>
+<ul>
+<li>One card per habit, each counting down from 100, with a 100-dot grid.</li>
+<li>Count any attempt with one tap. Undo on the card and in the bar at the bottom fixes mis-taps.</li>
+<li>Shot history for each habit, where you can remove any single shot. Rename or delete a habit from its menu.</li>
+<li>An optional evening reminder ("Did you take any shots today?") that skips days you already logged a shot.</li>
+<li>Works offline. Your data is stored on your device, so it works without an account.</li>
+<li>Optional sign-in with Google to keep your shots in sync across devices.</li>
+<li>Light and dark themes.</li>
+</ul>
+
+<h2>Questions</h2>
+<dl>
+<dt>Is it free?</dt>
+<dd>Yes. No ads, no trial, no paid plan.</dd>
+<dt>Do I need an account?</dt>
+<dd>No. Everything works on one device without signing in. Sign in with Google only if you want the same shots on your phone and your computer.</dd>
+<dt>Which devices does it work on?</dt>
+<dd>Any phone, tablet or computer with a modern browser. It's a web app you can install: on Android and desktop Chrome or Edge, use "Install app"; on iPhone and iPad, tap Share, then "Add to Home Screen". Once installed it opens like any other app and works offline.</dd>
+<dt>Does it have reminders?</dt>
+<dd>Yes, one optional evening reminder per day, at a time you choose, skipped on days you already logged a shot. On iPhone and iPad, reminders need the app added to the Home Screen (iOS 16.4 or later).</dd>
+<dt>Where is my data stored?</dt>
+<dd>On your device. If you sign in, a copy is kept on 100 Shots' server so your devices can sync. Sign out and the device copy is cleared after a final sync. Nothing is sold or shared, and there are no ads or trackers.</dd>
+<dt>Why count backwards and not up?</dt>
+<dd>Counting up has no end, so every bad attempt feels like a setback. Counting down from 100 puts the bad attempts inside a plan: you expected them. Watching the number fall is progress whether the attempt went well or not.</dd>
+<dt>What happens after 100?</dt>
+<dd>The card says "All 100 done" and keeps logging your shots. By then, the thing you were bad at has usually become something you just do.</dd>
+<dt>How is this different from a streak tracker?</dt>
+<dd>A streak tracker rewards consecutive days and punishes a missed one. 100 Shots counts attempts and ignores days. Missing a week costs nothing, and ten attempts in one day count as ten.</dd>
+<dt>Who made it?</dt>
+<dd><a href="https://finereli.com">Eli Finer</a>, an independent developer. The idea came from a post he wrote about counting attempts backwards, which turned into this app. The source is on <a href="https://github.com/finereli/100habits">GitHub</a>.</dd>
+</dl>
+
+<h2>When to use something else</h2>
+<p>If you want detailed habit statistics, many daily habits with schedules, or a streak to protect, a full habit tracker like Loop Habit Tracker, Habitify or Streaks fits better. If you're tracking sets and weights at the gym, use a workout log. 100 Shots does one thing: it counts attempts at something you're still bad at.</p>
+
+<div class="wide">
+<table>
+<thead><tr><th></th><th>100 Shots</th><th>Typical habit tracker</th><th>Tally counter app</th></tr></thead>
+<tbody>
+<tr><th>Counts</th><td>Attempts, down from 100</td><td>Days done, streaks</td><td>Taps, up from 0</td></tr>
+<tr><th>Missing a day</th><td>Costs nothing</td><td>Breaks the streak</td><td>Costs nothing</td></tr>
+<tr><th>Built-in expectation</th><td>100 bad attempts are normal</td><td>Don't break the chain</td><td>None</td></tr>
+<tr><th>Account</th><td>Optional</td><td>Often required</td><td>Usually none</td></tr>
+<tr><th>Price</th><td>Free</td><td>Often subscription</td><td>Free or paid</td></tr>
+</tbody>
+</table>
+</div>
+
+<p><a class="open" href="/">Open 100 Shots</a></p>
+<footer>Made by <a href="https://finereli.com">Eli Finer</a>. <a href="https://github.com/finereli/100habits">Source on GitHub</a>.</footer>
+</main>
+</body>
+</html>
